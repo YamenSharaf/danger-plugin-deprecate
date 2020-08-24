@@ -1,0 +1,3 @@
+import deprecate from './'
+
+deprecate()
