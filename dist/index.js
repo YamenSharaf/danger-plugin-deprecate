@@ -10,7 +10,6 @@ var JS_FILE = /\.(js|ts)x?$/i;
 
 var findInstance = function findInstance(content, pattern) {
   var matches = content.match(pattern);
-  console.log("matches before:", matches);
   if (!matches) return [];
   matches = matches.filter(function (match) {
     var singleMatch = pattern.exec(match);
@@ -18,13 +17,19 @@ var findInstance = function findInstance(content, pattern) {
     return singleMatch[1];
   });
 
-  console.log("matches after:", matches);
   return matches;
 };
 
+var rulesMap = {
+  FAIL: fail,
+  WARN: warn,
+  INFO: message
+};
+
 var defaultCallback = function defaultCallback(file, matches, ruleName) {
-  console.log("actual matches:", matches);
-  return fail(`${matches.length} ${ruleName} failed in ${file}.`);
+  var ruleLevel = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "FAIL";
+
+  return rulesMap[ruleLevel](`${matches.length} ${ruleName} failed in ${file}.`);
 };
 
 /**
@@ -76,11 +81,12 @@ exports.default = function () {
 
               config.forEach(function (configEntry) {
                 var ruleName = configEntry.name;
+                var ruleLevel = configEntry.level;
                 var pattern = new RegExp(configEntry.rule, "g");
                 var matches = findInstance(diff.added, pattern);
                 if (matches.length === 0) return;
 
-                callback(file, matches, ruleName);
+                callback(file, matches, ruleName, ruleLevel);
               });
             });
 
