@@ -1,13 +1,13 @@
 const JS_FILE = /\.(js|ts)x?$/i;
 
-const findConsole = (content, pattern) => {
+const findInstance = (content, pattern) => {
   let matches = content.match(pattern);
   if (!matches) return [];
 
   matches = matches.filter(match => {
     const singleMatch = pattern.exec(match);
     if (!singleMatch || singleMatch.length === 0) return false;
-    return !whitelist.includes(singleMatch[1]);
+    return singleMatch[1];
   });
 
   return matches;
@@ -46,7 +46,7 @@ export default async function deprecate(options = {}) {
       config.forEach(configEntry => {
         const ruleName = configEntry.name;
         const pattern = new RegExp(configEntry.rule, "g");
-        const matches = findConsole(diff.added, pattern);
+        const matches = findInstance(diff.added, pattern);
         if (matches.length === 0) return;
 
         callback(file, matches, ruleName);
