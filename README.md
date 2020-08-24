@@ -11,17 +11,33 @@
 Install:
 
 ```sh
-yarn add danger-plugin-deprecate --dev
+npm install -D danger-plugin-deprecate
 ```
 
 At a glance:
 
 ```js
 // dangerfile.js
-import deprecate from 'danger-plugin-deprecate'
+import deprecate from "danger-plugin-deprecate";
 
-deprecate()
+const config = [
+  {
+    name: "console_log_warn",
+    rule: "(console.)(log|warn)",
+    ruleDescription: "Regex to find console.log or console.warn calls",
+    level: "INFO"
+  },
+  {
+    name: "TODO",
+    rule: "(TODO)",
+    ruleDescription: "Regex to find TODO comments",
+    level: "WARN"
+  }
+];
+
+deprecate({ config });
 ```
+
 ## Changelog
 
 See the GitHub [release history](https://github.com/yamensharaf/danger-plugin-deprecate/releases).
