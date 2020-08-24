@@ -31,7 +31,7 @@
     "docs": "esdoc -c .esdoc.json",
     "prepublish": "npm run build",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "postinstall": "babel src --out-dir dist --ignore *.test.js"
+    "postinstall": "npm run build"
   },
   "license": "MIT",
   "engines": {
