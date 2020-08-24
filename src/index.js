@@ -12,16 +12,19 @@ const findInstance = (content, pattern) => {
   return matches;
 };
 
-const rulesMap = {
-  FAIL: fail,
-  WARN: warn,
-  INFO: message
-};
-
 const defaultCallback = (file, matches, ruleName, ruleLevel = "FAIL") => {
-  return rulesMap[ruleLevel](
-    `${matches.length} ${ruleName} failed in ${file}.`
-  );
+  switch (ruleLevel) {
+    case "FAIL":
+      fail(`${matches.length} ${ruleName} failed in ${file}.`);
+    case "WARN":
+      warn(`${matches.length} ${ruleName} found in ${file}.`);
+      break;
+    case "INFO":
+      message(`${matches.length} ${ruleName} found in ${file}.`);
+      break;
+    default:
+      break;
+  }
 };
 
 /**

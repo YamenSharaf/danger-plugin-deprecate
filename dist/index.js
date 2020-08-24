@@ -20,16 +20,21 @@ var findInstance = function findInstance(content, pattern) {
   return matches;
 };
 
-var rulesMap = {
-  FAIL: fail,
-  WARN: warn,
-  INFO: message
-};
-
 var defaultCallback = function defaultCallback(file, matches, ruleName) {
   var ruleLevel = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "FAIL";
 
-  return rulesMap[ruleLevel](`${matches.length} ${ruleName} failed in ${file}.`);
+  switch (ruleLevel) {
+    case "FAIL":
+      fail(`${matches.length} ${ruleName} failed in ${file}.`);
+    case "WARN":
+      warn(`${matches.length} ${ruleName} found in ${file}.`);
+      break;
+    case "INFO":
+      message(`${matches.length} ${ruleName} found in ${file}.`);
+      break;
+    default:
+      break;
+  }
 };
 
 /**
