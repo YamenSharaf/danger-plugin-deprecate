@@ -31,8 +31,7 @@
     "docs": "esdoc -c .esdoc.json",
     "prepublish": "npm run build",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "install": "npm run build",
-    "postinstall": "build"
+    "preinstall": "npm run build"
   },
   "license": "MIT",
   "engines": {
