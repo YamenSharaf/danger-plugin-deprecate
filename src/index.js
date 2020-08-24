@@ -2,19 +2,22 @@ const JS_FILE = /\.(js|ts)x?$/i;
 
 const findInstance = (content, pattern) => {
   let matches = content.match(pattern);
+  console.log("matches before:", matches);
   if (!matches) return [];
-
   matches = matches.filter(match => {
     const singleMatch = pattern.exec(match);
     if (!singleMatch || singleMatch.length === 0) return false;
     return singleMatch[1];
   });
 
+  console.log("matches after:", matches);
   return matches;
 };
 
-const defaultCallback = (file, matches, ruleName) =>
-  fail(`${matches.length} ${ruleName} failed in ${file}.`);
+const defaultCallback = (file, matches, ruleName) => {
+  console.log("actual matches:", matches);
+  return fail(`${matches.length} ${ruleName} failed in ${file}.`);
+};
 
 /**
  * Danger plugin to prevent merging code that still has `console.log`s inside it.

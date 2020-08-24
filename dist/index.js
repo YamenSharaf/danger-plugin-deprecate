@@ -10,18 +10,20 @@ var JS_FILE = /\.(js|ts)x?$/i;
 
 var findInstance = function findInstance(content, pattern) {
   var matches = content.match(pattern);
+  console.log("matches before:", matches);
   if (!matches) return [];
-
   matches = matches.filter(function (match) {
     var singleMatch = pattern.exec(match);
     if (!singleMatch || singleMatch.length === 0) return false;
     return singleMatch[1];
   });
 
+  console.log("matches after:", matches);
   return matches;
 };
 
 var defaultCallback = function defaultCallback(file, matches, ruleName) {
+  console.log("actual matches:", matches);
   return fail(`${matches.length} ${ruleName} failed in ${file}.`);
 };
 
