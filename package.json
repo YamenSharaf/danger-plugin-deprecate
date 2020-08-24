@@ -30,8 +30,7 @@
     "predocs": "rm -rf docs/",
     "docs": "esdoc -c .esdoc.json",
     "prepublish": "npm run build",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "postinstall": "npm run build"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "license": "MIT",
   "engines": {
