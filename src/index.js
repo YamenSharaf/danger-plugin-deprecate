@@ -1,43 +1,39 @@
-const JS_FILE = /\.(js|ts)x?$/i;
+const fs = require('fs')
 
-const findInstance = (content, pattern) => {
-  let matches = content.match(pattern);
-  if (!matches) return [];
-  matches = matches.filter(match => {
-    const singleMatch = pattern.exec(match);
-    if (!singleMatch || singleMatch.length === 0) return false;
-    return singleMatch[1];
-  });
+const JS_FILE = /\.(js|ts)x?$/i
 
-  return matches;
-};
+const findInstanceCount = (content, pattern) => {
+  const matches = content.match(pattern)
+  return (matches || []).length
+}
 
-const defaultCallback = (file, matches, ruleName, ruleLevel = "FAIL") => {
+const defaultCallback = (file, count, ruleName, ruleLevel = 'INFO') => {
   switch (ruleLevel) {
-    case "FAIL":
-      fail(`${matches.length} ${ruleName} failed in ${file}.`);
-    case "WARN":
-      warn(`${matches.length} ${ruleName} found in ${file}.`);
-      break;
-    case "INFO":
-      message(`${matches.length} ${ruleName} found in ${file}.`);
-      break;
+    case 'FAIL':
+      fail(`${count} ${ruleName} found in ${file}.`)
+      break
+    case 'WARN':
+      warn(`${count} ${ruleName} found in ${file}.`)
+      break
+    case 'INFO':
+      message(`${count} ${ruleName} found in ${file}.`)
+      break
     default:
-      break;
+      break
   }
-};
+}
 
-/**
- * Danger plugin to prevent merging code that still has `console.log`s inside it.
- */
-export default async function deprecate(options = {}) {
-  const callback = options.callback || defaultCallback;
-  const config = options.config || {};
+export default async function deprecate(
+  options = {},
+  callback = defaultCallback,
+) {
+  const report = {}
+  const config = options.config || {}
 
-  if (typeof callback !== "function")
+  if (typeof callback !== 'function')
     throw new Error(
-      "[danger-plugin-no-console] callback option has to be an function."
-    );
+      '[danger-plugin-no-console] callback option has to be an function.',
+    )
 
   const diffs = danger.git.created_files
     .concat(danger.git.modified_files)
@@ -45,23 +41,32 @@ export default async function deprecate(options = {}) {
     .map(file => {
       return danger.git.diffForFile(file).then(diff => ({
         file,
-        diff
-      }));
-    });
+        diff,
+      }))
+    })
 
-  const additions = await Promise.all(diffs);
+  const additions = await Promise.all(diffs)
 
-  additions
-    .filter(({ diff }) => !!diff)
-    .forEach(({ file, diff }) => {
-      config.forEach(configEntry => {
-        const ruleName = configEntry.name;
-        const ruleLevel = configEntry.level;
-        const pattern = new RegExp(configEntry.rule, "g");
-        const matches = findInstance(diff.added, pattern);
-        if (matches.length === 0) return;
+  config.forEach(configEntry => {
+    const ruleName = configEntry.name
+    const ruleLevel = configEntry.level
+    const pattern = new RegExp(configEntry.rule, 'g')
+    report[ruleName] = []
 
-        callback(file, matches, ruleName, ruleLevel);
-      });
-    });
+    additions
+      .filter(({ diff }) => !!diff)
+      .forEach(({ file, diff }) => {
+        const count = findInstanceCount(diff.added, pattern)
+        if (!count) return
+
+        callback(file, count, ruleName, ruleLevel)
+        report[ruleName].push({ file, count })
+      })
+  })
+
+  return fs.writeFile(
+    `deprecate_report.json`,
+    JSON.stringify(report, null, 2),
+    err => err && console.log(err),
+  )
 }
