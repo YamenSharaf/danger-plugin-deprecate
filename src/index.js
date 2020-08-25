@@ -1,4 +1,4 @@
-const fs = require('fs')
+import fs from 'fs'
 
 const JS_FILE = /\.(js|ts)x?$/i
 
@@ -10,13 +10,13 @@ const findInstanceCount = (content, pattern) => {
 const defaultCallback = (file, count, ruleName, ruleLevel = 'INFO') => {
   switch (ruleLevel) {
     case 'FAIL':
-      fail(`${count} ${ruleName} found in ${file}.`)
+      fail(`${count} ${ruleName} found in ${file}`)
       break
     case 'WARN':
-      warn(`${count} ${ruleName} found in ${file}.`)
+      warn(`${count} ${ruleName} found in ${file}`)
       break
     case 'INFO':
-      message(`${count} ${ruleName} found in ${file}.`)
+      message(`${count} ${ruleName} found in ${file}`)
       break
     default:
       break
