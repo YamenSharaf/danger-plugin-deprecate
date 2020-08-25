@@ -70,4 +70,7 @@ dist/
 !.vscode/launch.json
 !.vscode/extensions.json
 
+### Reports ###
+deprecate_report.json
+
 # End of https://www.gitignore.io/api/node,visualstudiocode
