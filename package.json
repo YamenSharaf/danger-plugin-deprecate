@@ -18,7 +18,7 @@
     "danger-plugin",
     "deprecate"
   ],
-  "version": "0.1.0-development",
+  "version": "0.2.0-development",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
   "scripts": {
